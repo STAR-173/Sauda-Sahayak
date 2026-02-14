@@ -133,3 +133,4 @@ dist-ssr
 *.swo
 
 docs/
+.claude/

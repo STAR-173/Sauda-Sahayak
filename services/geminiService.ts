@@ -158,10 +158,8 @@ export const transcribeAudio = async (audioBase64: string, mimeType: string): Pr
   }
 };
 
-export const generateSpeech = async (text: string): Promise<string> => {
-  if (!apiKey) {
-    throw new Error("API Key is missing.");
-  }
+export const generateSpeech = async (text: string): Promise<string | null> => {
+  if (!apiKey) return null;
 
   try {
     const response = await ai.models.generateContent({
@@ -177,13 +175,9 @@ export const generateSpeech = async (text: string): Promise<string> => {
       },
     });
 
-    const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    if (!audioData) {
-        throw new Error("No audio data generated");
-    }
-    return audioData;
-  } catch (error) {
-    console.error("TTS Error:", error);
-    throw new Error("Failed to generate speech.");
+    return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data || null;
+  } catch {
+    // TTS is best-effort — return null so callers degrade gracefully
+    return null;
   }
 };

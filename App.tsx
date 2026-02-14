@@ -34,6 +34,7 @@ const App: React.FC = () => {
       setIsPlayingResponse(true);
       const scriptToSpeak = `Risk Level: ${analysis.risk_level}. Detected Scam: ${analysis.detected_tactic}. Say this: ${analysis.short_response_script}`;
       const audioBase64 = await generateSpeech(scriptToSpeak);
+      if (!audioBase64) { setIsPlayingResponse(false); return; }
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       playbackContextRef.current = ctx;
       const audioBuffer = await decodeAudioData(audioBase64, ctx, 24000);
@@ -42,8 +43,8 @@ const App: React.FC = () => {
       source.connect(ctx.destination);
       source.start();
       source.onended = () => setIsPlayingResponse(false);
-    } catch (err) {
-      console.error("Failed to play audio response", err);
+    } catch {
+      // TTS is best-effort; silently degrade if unavailable
       setIsPlayingResponse(false);
     }
   };

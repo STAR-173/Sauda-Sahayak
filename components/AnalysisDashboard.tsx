@@ -147,8 +147,8 @@ const AnalysisDashboard: React.FC<Props> = ({ data }) => {
           <h3 className="text-[10px] font-semibold uppercase tracking-widest mb-4 w-full" style={{ color: 'var(--text-3)' }}>
             Threat Vector
           </h3>
-          <div className="w-full h-56">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="w-full" style={{ height: 224 }}>
+            <ResponsiveContainer width="100%" height={224} minWidth={0}>
               <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="100%" barSize={12} data={chartData}>
                 <RadialBar background={{ fill: 'var(--border)' }} dataKey="value" cornerRadius={8} />
                 <Legend iconSize={8} layout="vertical" verticalAlign="middle" wrapperStyle={{ right: 0, top: 0, fontSize: '11px', fontFamily: 'Outfit', color: 'var(--text-2)' }} />
