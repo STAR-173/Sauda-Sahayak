@@ -1,7 +1,7 @@
 import React from 'react';
-import { Mic, MicOff, Activity, XCircle } from 'lucide-react';
+import { Mic, Activity, X } from 'lucide-react';
 
-interface LiveInterfaceProps {
+interface Props {
   isConnected: boolean;
   isSpeaking: boolean;
   isListening: boolean;
@@ -9,83 +9,98 @@ interface LiveInterfaceProps {
   onDisconnect: () => void;
 }
 
-const LiveInterface: React.FC<LiveInterfaceProps> = ({ 
-  isConnected, 
-  isSpeaking, 
-  isListening, 
-  volume,
-  onDisconnect 
-}) => {
-  // Visualizer Rings calculation based on volume
-  // Volume is 0-100 roughly. 
-  const scale = 1 + (volume / 20); 
+const LiveInterface: React.FC<Props> = ({ isConnected, isSpeaking, isListening, volume, onDisconnect }) => {
+  const scale = 1 + (volume / 25);
+  const ringColor = isSpeaking ? 'var(--green)' : 'var(--yellow)';
 
   return (
-    <div className="flex flex-col items-center justify-center py-12 animate-fade-in relative overflow-hidden rounded-2xl bg-slate-800 border border-slate-700 min-h-[400px]">
-      
-      {/* Background Pulse Effect */}
-      <div className={`absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none transition-all duration-300 ${isSpeaking ? 'bg-blue-900/30' : ''}`}>
-        <div 
-            className="w-64 h-64 rounded-full bg-blue-500 blur-3xl transition-transform duration-100 ease-linear"
-            style={{ transform: `scale(${scale})` }}
+    <div className="card flex flex-col items-center justify-center py-16 relative overflow-hidden anim-scale" style={{ minHeight: '420px' }}>
+
+      {/* Background glow */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ opacity: 0.12 }}>
+        <div
+          className="rounded-full transition-transform duration-100 ease-linear"
+          style={{
+            width: '280px',
+            height: '280px',
+            background: `radial-gradient(circle, ${ringColor} 0%, transparent 70%)`,
+            transform: `scale(${scale})`,
+            filter: 'blur(40px)',
+          }}
         />
       </div>
 
-      <div className="z-10 flex flex-col items-center space-y-8">
-        
-        {/* Status Text */}
-        <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-white tracking-tight">
-                {isSpeaking ? "Sauda-Sahayak Speaking..." : isConnected ? "Listening..." : "Connecting..."}
-            </h2>
-            <p className="text-slate-400 text-sm">
-                Real-time Negotiation Coach
-            </p>
+      <div className="z-10 flex flex-col items-center gap-10">
+
+        {/* Status */}
+        <div className="text-center anim-in">
+          <h2 className="font-display font-bold text-2xl mb-1" style={{ color: 'var(--text)' }}>
+            {isSpeaking ? "Speaking..." : isConnected ? "Listening..." : "Connecting..."}
+          </h2>
+          <p className="text-xs" style={{ color: 'var(--text-3)' }}>Real-time Negotiation Coach</p>
         </div>
 
-        {/* Main Visualizer / Icon */}
-        <div className="relative">
-            {/* Outer Rings */}
-            <div 
-                className={`absolute inset-0 rounded-full border-2 border-blue-500/30 transition-all duration-100 ease-out`}
-                style={{ transform: `scale(${1 + (volume/50)})`, opacity: 0.5 }}
-            />
-            <div 
-                className={`absolute inset-0 rounded-full border border-blue-400/20 transition-all duration-100 ease-out`}
-                style={{ transform: `scale(${1 + (volume/30)})`, opacity: 0.3 }}
-            />
+        {/* Visualizer */}
+        <div className="relative anim-scale delay-2" style={{ width: '128px', height: '128px' }}>
+          {/* Outer rings */}
+          <div
+            className="live-ring"
+            style={{
+              borderColor: `${ringColor}25`,
+              transform: `scale(${1 + (volume / 40)})`,
+              opacity: 0.5,
+            }}
+          />
+          <div
+            className="live-ring"
+            style={{
+              borderColor: `${ringColor}15`,
+              transform: `scale(${1 + (volume / 25)})`,
+              opacity: 0.3,
+            }}
+          />
 
-            {/* Core Circle */}
-            <div className={`w-32 h-32 rounded-full flex items-center justify-center shadow-2xl transition-colors duration-500 ${
-                isSpeaking 
-                ? 'bg-emerald-500 shadow-emerald-500/50' 
-                : 'bg-blue-600 shadow-blue-600/50'
-            }`}>
-                {isSpeaking ? (
-                    <Activity size={48} className="text-white animate-pulse" />
-                ) : (
-                    <Mic size={48} className="text-white" />
-                )}
-            </div>
+          {/* Core */}
+          <div
+            className="w-full h-full rounded-full flex items-center justify-center transition-all duration-500"
+            style={{
+              background: isSpeaking ? 'var(--green)' : 'var(--yellow)',
+              boxShadow: `0 0 40px ${isSpeaking ? 'rgba(34,197,94,0.3)' : 'rgba(245,197,24,0.25)'}`,
+            }}
+          >
+            {isSpeaking ? (
+              <Activity size={44} style={{ color: '#0a0a0a' }} className="anim-breathe" />
+            ) : (
+              <Mic size={44} style={{ color: '#0a0a0a' }} />
+            )}
+          </div>
         </div>
 
-        {/* Instructions */}
-        <div className="bg-slate-900/60 backdrop-blur-sm px-6 py-3 rounded-full border border-slate-700">
-            <p className="text-xs text-slate-300 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                Live Audio Session Active
-            </p>
+        {/* Live indicator */}
+        <div className="anim-in delay-3">
+          <span className="tag" style={{ background: 'var(--red-dim)', color: 'var(--red)', border: '1px solid rgba(239,68,68,0.2)' }}>
+            <span className="w-1.5 h-1.5 rounded-full anim-breathe" style={{ background: 'var(--red)' }} />
+            Live Session
+          </span>
         </div>
 
-        {/* Disconnect Button */}
-        <button 
-            onClick={onDisconnect}
-            className="group flex items-center gap-2 px-6 py-3 bg-slate-700 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50 rounded-xl transition-all border border-slate-600 text-slate-300 mt-8"
+        {/* Disconnect */}
+        <button
+          onClick={onDisconnect}
+          className="btn-ghost flex items-center gap-2 px-5 py-2.5 text-sm anim-in delay-4"
+          style={{ borderColor: 'rgba(239,68,68,0.15)' }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(239,68,68,0.4)';
+            e.currentTarget.style.color = 'var(--red)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(239,68,68,0.15)';
+            e.currentTarget.style.color = 'var(--text-2)';
+          }}
         >
-            <XCircle size={20} className="group-hover:text-red-400" />
-            <span>End Session</span>
+          <X size={16} />
+          End Session
         </button>
-
       </div>
     </div>
   );
