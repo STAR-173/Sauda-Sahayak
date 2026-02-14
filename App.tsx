@@ -75,7 +75,7 @@ const App: React.FC = () => {
       setIsAnalyzing(false);
     }
   };
-
+  // demo
   const handleDemo = () => setInputText(DEMO_SCENARIO);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
