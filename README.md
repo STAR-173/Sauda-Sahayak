@@ -14,7 +14,7 @@
 ## 📖 Overview
 **Sauda-Sahayak** is a multimodal AI agent designed to help users negotiate fair prices with auto drivers and brokers in Bangalore. It leverages **Audio** to detect verbal scams, **Vision** to spot fake taxi apps, and **Local Knowledge** to suggest the perfect Kannada/Hindi counter-offers.
 
-Living in Bangalore, "Meter Broken" or "Wonandhalf" are daily phrases. This app gives you the **Street Smarts** of a local, powered by Google's Gemini 1.5 Flash.
+Living in Bangalore, "Meter Broken" or "Wonandhalf" are daily phrases. This app gives you the **Street Smarts** of a local, powered by Google's Gemini 3 Flash.
 
 ## ✨ Key Features
 
@@ -39,7 +39,7 @@ Living in Bangalore, "Meter Broken" or "Wonandhalf" are daily phrases. This app 
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 19 (Vite), TypeScript
-- **AI Model**: Google Gemini 1.5 Flash (via `@google/genai` SDK)
+- **AI Model**: Google Gemini 3 Flash (via `@google/genai` SDK)
 - **Styling**: Tailwind CSS + CSS Variables (Dark/Glassmorphism Theme)
 - **Audio/Video**: Web Audio API, MediaRecorder API
 - **Icons**: Lucide React
