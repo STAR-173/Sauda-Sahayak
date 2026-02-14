@@ -1,0 +1,7 @@
+{
+  "name": "Sauda-Sahayak",
+  "description": "Real-time negotiation intelligence engine for Indian consumers using Gemini AI.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
