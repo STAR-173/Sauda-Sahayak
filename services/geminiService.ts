@@ -1,12 +1,12 @@
 import { GoogleGenAI, Modality } from "@google/genai";
-import { SYSTEM_INSTRUCTION } from "../constants";
+import { getSystemInstruction } from "../constants";
 import { NegotiationAnalysis } from "../types";
 
 const apiKey = process.env.API_KEY || '';
 
 const ai = new GoogleGenAI({ apiKey });
 
-export const analyzeNegotiationText = async (text: string): Promise<NegotiationAnalysis> => {
+export const analyzeNegotiationText = async (text: string, isRowdyMode: boolean = false): Promise<NegotiationAnalysis> => {
   if (!apiKey) {
     throw new Error("API Key is missing.");
   }
@@ -23,7 +23,7 @@ export const analyzeNegotiationText = async (text: string): Promise<NegotiationA
         },
       ],
       config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
+        systemInstruction: getSystemInstruction(isRowdyMode),
         responseMimeType: "application/json",
         temperature: 0.4, 
       },

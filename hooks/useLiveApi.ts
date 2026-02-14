@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { GoogleGenAI, LiveServerMessage, Modality } from '@google/genai';
-import { LIVE_SYSTEM_INSTRUCTION } from '../constants';
+import { getLiveSystemInstruction } from '../constants';
 import { createAudioPayload, decodeAudioData } from '../services/audioUtils';
 
 const API_KEY = process.env.API_KEY || '';
@@ -51,7 +51,7 @@ export const useLiveApi = () => {
     setVolume(0);
   }, []);
 
-  const connect = useCallback(async () => {
+  const connect = useCallback(async (isRowdyMode: boolean = false) => {
     if (!API_KEY) {
       console.error("API Key missing");
       return;
@@ -76,7 +76,7 @@ export const useLiveApi = () => {
         model: MODEL_NAME,
         config: {
           responseModalities: [Modality.AUDIO],
-          systemInstruction: LIVE_SYSTEM_INSTRUCTION,
+          systemInstruction: getLiveSystemInstruction(isRowdyMode),
           speechConfig: {
             voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
           },

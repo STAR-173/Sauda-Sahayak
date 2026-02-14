@@ -46,6 +46,26 @@ Your job is to detect manipulation patterns, score risk, and provide strategic c
 If user mentions self-harm, stop analysis and provide crisis support in JSON.
 `;
 
+const POLITE_STYLE_INSTRUCTION = `
+STYLE MODE: POLITE
+- Keep tone calm, respectful, and professional.
+- Suggest de-escalating language.
+- In "short_response_script", use polite but firm wording.
+- Avoid insults, taunts, or aggressive street language.
+`;
+
+const ROWDY_STYLE_INSTRUCTION = `
+STYLE MODE: ROWDY LOCAL BARGAINING
+- Use assertive, street-smart local bargaining energy common in Indian market negotiation.
+- Be bold, direct, and hard to push around, but stay non-abusive and non-violent.
+- In "short_response_script", produce a punchy line the user can say to re-balance power quickly.
+- Keep it practical and realistic for bargaining; no legal threats or extreme language.
+`;
+
+export const getSystemInstruction = (isRowdyMode: boolean): string => {
+  return `${SYSTEM_INSTRUCTION}\n\n${isRowdyMode ? ROWDY_STYLE_INSTRUCTION : POLITE_STYLE_INSTRUCTION}`;
+};
+
 export const LIVE_SYSTEM_INSTRUCTION = `
 You are Sauda-Sahayak, a real-time negotiation coach. 
 Your goal is to listen to the user's negotiation conversation (or their description of it) and immediately provide tactical advice via voice.
@@ -63,5 +83,23 @@ Your goal is to listen to the user's negotiation conversation (or their descript
 
 Do NOT output JSON. Speak directly to the user as a coach whispering in their ear.
 `;
+
+const LIVE_POLITE_STYLE_INSTRUCTION = `
+LIVE STYLE MODE: POLITE
+- Speak in a composed, respectful tone.
+- Give firm but courteous counter-lines.
+- Keep the user confident without sounding confrontational.
+`;
+
+const LIVE_ROWDY_STYLE_INSTRUCTION = `
+LIVE STYLE MODE: ROWDY LOCAL
+- Speak like a sharp local bargaining coach.
+- Be direct, confident, and tough-minded, but never abusive.
+- Give short, punchy counter-lines the user can say immediately.
+`;
+
+export const getLiveSystemInstruction = (isRowdyMode: boolean): string => {
+  return `${LIVE_SYSTEM_INSTRUCTION}\n\n${isRowdyMode ? LIVE_ROWDY_STYLE_INSTRUCTION : LIVE_POLITE_STYLE_INSTRUCTION}`;
+};
 
 export const DEMO_SCENARIO = "If you don’t pay today, I have 5 other tenants. Security deposit is 6 months, non negotiable. This is standard rate in this area, don't waste my time.";

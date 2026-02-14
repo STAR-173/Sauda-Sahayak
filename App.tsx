@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Send, RefreshCw, AlertCircle, FileText, Square, Loader2, Zap, Volume2, VolumeX } from 'lucide-react';
+import { Mic, Send, RefreshCw, AlertCircle, FileText, Square, Loader2, Zap, Volume2, VolumeX, Flame } from 'lucide-react';
 import { analyzeNegotiationText, transcribeAudio, generateSpeech } from './services/geminiService';
 import { decodeAudioData } from './services/audioUtils';
 import AnalysisDashboard from './components/AnalysisDashboard';
@@ -23,6 +23,7 @@ const App: React.FC = () => {
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
   const [autoSpeak, setAutoSpeak] = useState<boolean>(true); // Auto-speak result enabled by default
   const [isPlayingResponse, setIsPlayingResponse] = useState<boolean>(false);
+  const [rowdyMode, setRowdyMode] = useState<boolean>(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -80,7 +81,7 @@ const App: React.FC = () => {
     stopPlayback(); // Stop any previous audio
 
     try {
-      const data = await analyzeNegotiationText(textToAnalyze);
+      const data = await analyzeNegotiationText(textToAnalyze, rowdyMode);
       setResult(data);
       
       // Auto-Speak Logic
@@ -187,10 +188,21 @@ const App: React.FC = () => {
     stopPlayback();
     if (mode === 'text') {
       setMode('live');
-      connect();
+      connect(rowdyMode);
     } else {
       disconnect();
       setMode('text');
+    }
+  };
+
+  const toggleRowdyMode = async () => {
+    const next = !rowdyMode;
+    setRowdyMode(next);
+
+    // If live mode is active, reconnect to apply updated live instruction immediately.
+    if (mode === 'live' && isConnected) {
+      await disconnect();
+      await connect(next);
     }
   };
 
@@ -209,6 +221,18 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <button
+              onClick={toggleRowdyMode}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${
+                rowdyMode
+                ? 'bg-amber-500/20 text-amber-300 border-amber-500/50'
+                : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
+              }`}
+              title="Toggle bargaining style: Local Rowdy vs Polite"
+            >
+              <Flame size={14} className={rowdyMode ? 'fill-current' : ''} />
+              {rowdyMode ? 'Rowdy Mode: ON' : 'Rowdy Mode: OFF'}
+            </button>
              {/* Mode Toggle Button */}
             <button 
                 onClick={toggleLiveMode}
@@ -314,6 +338,10 @@ const App: React.FC = () => {
                                   {autoSpeak ? <Volume2 size={14} /> : <VolumeX size={14} />}
                                   {autoSpeak ? 'Auto-Voice Enabled' : 'Auto-Voice Disabled'}
                                 </button>
+
+                                <div className={`text-xs px-3 py-1.5 rounded-lg border ${rowdyMode ? 'bg-amber-500/10 text-amber-300 border-amber-500/40' : 'bg-slate-800 text-slate-400 border-slate-700'}`}>
+                                  Style: {rowdyMode ? 'Rowdy Local' : 'Polite'}
+                                </div>
                             </div>
 
                             <button 
